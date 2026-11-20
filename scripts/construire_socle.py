@@ -1,7 +1,7 @@
 """Reconstruit le socle (masque + plaquette) à partir du PowerPoint de référence (galerie des composants).
 
 Usage :
-  python3 scripts/construire_socle.py galerie.pptx pptx/eulidia-socle-2026.pptx 39,40,41,42,43,44,45 "Eulidia 2026"
+  python3 scripts/construire_socle.py galerie.pptx pptx/eulidia-socle-2026.pptx 39,40,41,42,43,44,45 "Eulidia 2026 — socle (masque + plaquette)"
   (39 à 45 = les 7 slides de la plaquette dans la galerie de novembre 2026 : vérifier les numéros
    si la galerie change ; ce sont les slides de disposition « Slide vide claire »)
 
@@ -17,7 +17,7 @@ from pptx.opc.constants import RELATIONSHIP_TYPE as RT
 from lxml import etree
 
 SRC = sys.argv[1]; OUT = sys.argv[2]; KEEP = [int(x) for x in sys.argv[3].split(',')] if len(sys.argv) > 3 and sys.argv[3] else []
-TITLE = sys.argv[4] if len(sys.argv) > 4 else "Eulidia 2026"
+TITLE = sys.argv[4] if len(sys.argv) > 4 else "Eulidia 2026 — socle (masque + plaquette)"
 
 prs = Presentation(SRC)
 pp = prs.part
