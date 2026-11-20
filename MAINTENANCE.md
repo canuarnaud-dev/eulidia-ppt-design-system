@@ -86,3 +86,4 @@ Prérequis : `pip install -r requirements.txt` (sous Windows, `python` au lieu d
 - 2026-11-18 : plaquette conditionnelle (proposition commerciale ou demande explicite) : `retirer_plaquette()`, `placer_plaquette()`, `auditer(plaquette=…)`.
 - 2026-11-19 : kit de maintenance et scripts de génération reproductibles.
 - 2026-11-20 : passage en dépôt Git (Claude Code) avec CLAUDE.md ; la galerie de référence est versionnée dans `reference/`.
+- 2026-11-20 : `tester_skill.py` compatible Windows (retour au dossier de départ avant suppression du dossier temporaire, chemin du skill injecté avec des « / »). Design system et skill inchangés. Sous Python 3.14, pyoxipng n'a pas de wheel : reconstruire le socle avec un Python 3.12/3.13.
