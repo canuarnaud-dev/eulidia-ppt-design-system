@@ -1,0 +1,1 @@
+Vignettes des 5 dispositions autorisées du masque (rendu à vide) : 01 Première page, 02 Sommaire, 03 Section, 04 Slide de contenu + barre horizontale, 05 Slide vide claire. Le masque lui-même est dans la section *Masque PowerPoint et kit de génération*.

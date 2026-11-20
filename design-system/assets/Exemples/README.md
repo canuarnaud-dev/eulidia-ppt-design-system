@@ -1,0 +1,1 @@
+Rendus de slides de référence : fondations (`slide-05.jpg` à `slide-11.jpg`), puis un exemple par composant (le nom du fichier est rappelé dans chaque fiche). Ce sont des références visuelles : toujours reconstruire en formes PowerPoint natives, jamais coller une image de slide.
