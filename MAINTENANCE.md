@@ -17,6 +17,8 @@ Chaîne : PowerPoint de référence → (socle) → design system (artefact) →
 
 ## 2. Procédure de mise à jour
 
+**Nouvelle version de la galerie** : dans Claude Code, `/maj-galerie <fichier.pptx>` (`.claude/commands/maj-galerie.md`) déroule toute la procédure ci-dessous. Sa partie mécanique est `scripts/mettre_a_jour.py` : comparaison slide par slide avec `reference/` (rapport `build/maj-galerie/rapport.json`), confirmation, copie, socle reconstruit si le masque ou la plaquette changent (slides de la plaquette détectées par la disposition « Slide vide claire »), vignettes 1200×675 exportées par PowerPoint dans `build/maj-galerie/vignettes/`, puis génération et test si aucune fiche n'est à rédiger (sinon `--generer` une fois les fiches à jour). Utilisable seul : `--analyse` pour le rapport sans rien modifier.
+
 1. **Vérifier que la copie de travail est à jour** : `list_files` sur l'artefact et comparer les sha256 avec `sha256sum design-system/...`. Si un fichier diffère, le relire (`read_file`, un fichier par appel) et le remplacer dans le kit avant toute modification.
 2. **Modifier** sur une branche les fichiers de `design-system/` (et `skill/SKILL.md` si la règle touche le démarrage ou les règles « qui ne se discutent pas »). Garder les deux cohérents : une règle du README se retrouve dans le skill.
 3. **Si le masque ou la plaquette change** dans le PowerPoint de référence : `python3 scripts/construire_socle.py reference/galerie-composants-eulidia.pptx pptx/eulidia-socle-2026.pptx 39,40,41,42,43,44,45 "Eulidia 2026 — socle (masque + plaquette)"` (vérifier les numéros : ce sont les slides de disposition « Slide vide claire »). Environ 1 min avec l'optimisation PNG. pyoxipng n'a pas de wheel pour Python 3.14 : sous Windows, lancer avec `py -3.13`.
@@ -50,6 +52,10 @@ python-pptx / PowerPoint :
 - Retirer des slides : `drop_rel` + retrait de `sldIdLst` suffit, les parties orphelines ne sont pas écrites (socle 10,5 Mo → document sans plaquette ~0,4 Mo).
 - Le socle est optimisé sans perte (pyoxipng) : 16,5 → 10,5 Mo, pixels identiques.
 
+Windows / OneDrive :
+- Le dépôt est dans OneDrive, qui marque les dossiers en lecture seule : `shutil.rmtree` échoue (« Accès refusé ») sur un dossier vidé. Utiliser `supprimer_dossier()` (dans `generer_skill.py` et `mettre_a_jour.py`).
+- Vignettes : les exporter avec PowerPoint (COM, `Slide.Export`), qui dessine les liserés dégradés, contrairement à LibreOffice. L'export ne ferme PowerPoint que s'il n'avait aucune présentation ouverte.
+
 Artefacts :
 - Un artefact créé à partir d'un type (Design System) ne sert que du **texte**, un fichier par `read_file` ; `paths` est refusé. Les binaires (pptx, images) ne se relisent pas : d'où le socle et les assets conservés dans ce kit et dans le skill.
 - Extensions `.wdp` / `.emf` refusées par `publish_files` (contournement historique : base64 dans un `.b64.txt`). Le socle n'est plus publié dans l'artefact.
@@ -73,6 +79,8 @@ pptx/eulidia-socle-2026.pptx   socle optimisé (masque + plaquette)
 scripts/construire_socle.py    galerie -> socle
 scripts/generer_skill.py       dépôt -> build/eulidia-powerpoint/ + zip
 scripts/tester_skill.py        contrôle du skill généré
+scripts/mettre_a_jour.py       nouvelle galerie -> rapport des différences, socle, vignettes, skill
+.claude/commands/maj-galerie.md   commande Claude Code /maj-galerie (procédure complète)
 build/                    sortie de génération (ignorée par git)
 ```
 
@@ -88,3 +96,4 @@ Prérequis : `pip install -r requirements.txt` (sous Windows, `python` au lieu d
 - 2026-11-20 : passage en dépôt Git (Claude Code) avec CLAUDE.md ; la galerie de référence est versionnée dans `reference/`.
 - 2026-11-20 : `tester_skill.py` compatible Windows (retour au dossier de départ avant suppression du dossier temporaire, chemin du skill injecté avec des « / »). Design system et skill inchangés. Sous Python 3.14, pyoxipng n'a pas de wheel : reconstruire le socle avec un Python 3.12/3.13.
 - 2026-11-20 : titre du socle « Eulidia 2026 — socle (masque + plaquette) » dans la commande de l'étape 3 et par défaut dans `construire_socle.py` (la commande passait « Eulidia 2026 » et aurait changé le titre). Reconstruction testée sous Python 3.13 : pixels et métadonnées identiques au socle versionné. Socle, design system et skill inchangés.
+- 2026-11-24 : mise à jour simplifiée depuis une nouvelle galerie : `scripts/mettre_a_jour.py` + commande `/maj-galerie`. Testé sur une variante (visuel, notes, déplacement, retrait, plaquette modifiés) : détection exacte, socle reconstruit (10,6 Mo), vignettes PowerPoint fidèles, skill généré et testé. `generer_skill.py` : suppression de `build/` compatible avec les dossiers OneDrive en lecture seule. `.venv/` ignoré (Python 3.12 via uv). Design system, socle et skill inchangés.

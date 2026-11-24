@@ -17,7 +17,19 @@ Le design system parle de « groupes d'assets » et de « sections » (vocabulai
 le skill parle de chemins de fichiers. Les tables REMPLACEMENTS_* font la traduction.
 Si une phrase source change, le script échoue en nommant la phrase introuvable : mettre la table à jour.
 """
-import pathlib, re, shutil, sys, zipfile
+import os, pathlib, re, shutil, stat, sys, zipfile
+
+
+def supprimer_dossier(chemin):
+    """rmtree qui passe les dossiers en lecture seule (OneDrive les marque ainsi sous Windows)."""
+    def forcer(fonction, p, _):
+        os.chmod(p, stat.S_IWRITE)
+        fonction(p)
+    if sys.version_info >= (3, 12):
+        shutil.rmtree(chemin, onexc=forcer)
+    else:
+        shutil.rmtree(chemin, onerror=forcer)
+
 
 KIT = pathlib.Path(sys.argv[1]) if len(sys.argv) > 1 else pathlib.Path(__file__).resolve().parent.parent
 OUT = pathlib.Path(sys.argv[2]) if len(sys.argv) > 2 else pathlib.Path("build")
@@ -75,7 +87,7 @@ def fiche_markdown(nom, texte):
 
 def main():
     if SK.exists():
-        shutil.rmtree(SK)
+        supprimer_dossier(SK)
     (SK / "references" / "composants").mkdir(parents=True)
     (SK / "scripts").mkdir()
 
